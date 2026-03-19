@@ -37,6 +37,44 @@ jobs:
           name: dashboard_screenshot
           path: dashboard_screenshot.png
 
+      - name: Send Screenshot To Teams Chat (Power Automate)
+        if: always() && secrets.TEAMS_CHAT_FLOW_URL != ''
+        env:
+          TEAMS_CHAT_FLOW_URL: ${{ secrets.TEAMS_CHAT_FLOW_URL }}
+          RUN_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          python - <<'PY'
+          import base64
+          import json
+          import os
+          import pathlib
+          import urllib.request
+
+          image_path = pathlib.Path("dashboard_screenshot.png")
+          if not image_path.exists():
+              print("dashboard_screenshot.png not found, skipping Teams chat payload.")
+              raise SystemExit(0)
+
+          with image_path.open("rb") as f:
+              image_b64 = base64.b64encode(f.read()).decode("ascii")
+
+          payload = {
+              "text": "Punch OUT completed",
+              "runUrl": os.environ["RUN_URL"],
+              "fileName": "dashboard_screenshot.png",
+              "imageBase64": image_b64,
+          }
+
+          req = urllib.request.Request(
+              os.environ["TEAMS_CHAT_FLOW_URL"],
+              data=json.dumps(payload).encode("utf-8"),
+              headers={"Content-Type": "application/json"},
+          )
+
+          with urllib.request.urlopen(req, timeout=60) as resp:
+              print(f"Flow webhook response: {resp.status}")
+          PY
+
       - name: Notify MS Teams
         if: always() && secrets.TEAMS_WEBHOOK_URL != ''
         env:
