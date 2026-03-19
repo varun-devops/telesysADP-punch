@@ -78,7 +78,7 @@ def run():
             # Wait for the dashboard "Myself" span to load
             page.wait_for_selector('span.ffc-header:has-text("Myself")', timeout=30000)
             print("Dashboard loaded.")
-            
+            page.wait_for_timeout(1500)
             page.screenshot(path="dashboard_screenshot.png")
             print("Screenshot taken and saved as dashboard_screenshot.png")  
         else:
