@@ -36,3 +36,14 @@ jobs:
         with:
           name: dashboard_screenshot
           path: dashboard_screenshot.png
+
+      - name: Notify MS Teams
+        if: always() && secrets.TEAMS_WEBHOOK_URL != ''
+        env:
+          TEAMS_WEBHOOK_URL: ${{ secrets.TEAMS_WEBHOOK_URL }}
+        run: |
+          RUN_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          MESSAGE="Punch OUT workflow completed. Download screenshot artifact from this run: ${RUN_URL}"
+          curl -H "Content-Type: application/json" \
+            -d "{\"text\": \"${MESSAGE}\"}" \
+            "$TEAMS_WEBHOOK_URL"
