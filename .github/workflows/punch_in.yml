@@ -1,0 +1,31 @@
+name: Auto Punch IN
+
+on:
+  schedule:
+    # 10:00 AM IST = 04:30 AM UTC
+    - cron: '30 4 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  punch_in:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install playwright
+          playwright install chromium
+
+      - name: Run Punch In Script
+        env:
+          PUNCH_USERNAME: 'varun.singh@telesys.com'
+          PUNCH_PASSWORD: ${{ secrets.PUNCH_PASSWORD }} # Save your password in GitHub Secrets for safety, otherwise it will use default
+          PUNCH_ACTION: 'in'
+        run: python script.py
