@@ -29,3 +29,12 @@ jobs:
           PUNCH_PASSWORD: ${{ secrets.PUNCH_PASSWORD }} # Save your password in GitHub Secrets for safety, otherwise it will use default
           PUNCH_ACTION: 'in'
         run: python script.py
+
+      - name: Upload Debug Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: punch_in_debug
+          path: |
+            *.png
+            *.html
