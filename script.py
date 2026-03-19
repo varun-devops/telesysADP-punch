@@ -76,7 +76,7 @@ def run():
             page.click('a[href="/dashboard"]')
             
             # Wait for the dashboard "Myself" span to load
-            page.wait_for_selector('span.ffc-header:has-text("Myself")', timeout=15000)
+            page.wait_for_selector('span.ffc-header:has-text("Myself")', timeout=30000)
             print("Dashboard loaded.")
             
             page.screenshot(path="dashboard_screenshot.png")
