@@ -36,7 +36,7 @@ def login(page):
 def run():
     with sync_playwright() as p:
         is_github = os.environ.get("GITHUB_ACTIONS") == "true"
-        browser = p.chromium.launch(headless=is_github)
+        browser = p.chromium.launch(headless=is_github) 
         context = browser.new_context(
             permissions=['geolocation'],
             geolocation={'latitude': 28.6139, 'longitude': 77.2090}
@@ -54,7 +54,7 @@ def run():
             except Exception as e:
                 print("Punch In failed or already punched in?", e)
                 page.screenshot(path="error_punch_in.png")
-
+            
         elif ACTION == "out":
             try:
                 page.click('button:has-text("Punch Out")')
@@ -64,23 +64,23 @@ def run():
             except Exception as e:
                 print("Punch Out failed or already punched out?", e)
                 page.screenshot(path="error_punch_out.png")
-
+            
             print("Refreshing page to reveal Dashboard tab...")
             page.reload()
-
+            
             print("Logging in again after refresh...")
             login(page)
-
+            
             print("Clicking Dashboard tab...")
             # Click the Dashboard link
             page.click('a[href="/dashboard"]')
-
+            
             # Wait for the dashboard "Myself" span to load
             page.wait_for_selector('span.ffc-header:has-text("Myself")', timeout=15000)
             print("Dashboard loaded.")
-
+            
             page.screenshot(path="dashboard_screenshot.png")
-            print("Screenshot taken and saved as dashboard_screenshot.png")
+            print("Screenshot taken and saved as dashboard_screenshot.png")  
         else:
             print(f"Unknown action: {ACTION}")
         context.close()
